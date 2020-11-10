@@ -14,11 +14,12 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "concurrently": "^3.6.0",
     "express": "^4.16.3",
-    "mongoose": "^5.1.6"
+    "mysql2": "^2.2.5",
+    "sequelize": "^4.41.2"
   },
   "devDependencies": {
+    "concurrently": "^3.6.0",
     "nodemon": "^1.17.5"
   }
 }

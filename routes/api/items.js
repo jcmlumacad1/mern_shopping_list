@@ -8,8 +8,8 @@ const Item = require('../../models/Item');
 // @desc    Get All Items
 // @access  Public
 router.get('/', (req, res) => {
-  Item.find()
-    .sort({ date: -1 })
+  Item
+    .findAll()
     .then(items => res.json(items));
 });
 
@@ -17,19 +17,17 @@ router.get('/', (req, res) => {
 // @desc    Create An Item
 // @access  Public
 router.post('/', (req, res) => {
-  const newItem = new Item({
+  Item.create({
     name: req.body.name
-  });
-
-  newItem.save().then(item => res.json(item));
+  }).then(item => res.json(item));
 });
 
 // @route   DELETE api/items/:id
-// @desc    Delete A Item
+// @desc    Delete An Item
 // @access  Public
 router.delete('/:id', (req, res) => {
   Item.findById(req.params.id)
-    .then(item => item.remove().then(() => res.json({ success: true })))
+    .then(item => item.destroy().then(() => res.json({ success: true })))
     .catch(err => res.status(404).json({ success: false }));
 });
 
