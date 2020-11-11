@@ -13,6 +13,16 @@ class ShoppingList extends Component {
     ]
   };
 
+  componentDidMount() {
+    this.getItems()
+  }
+
+  getItems = () => {
+    fetch('/api/items')
+      .then(res => res.json())
+      .then(items => this.setState({items}))
+  };
+
   render() {
     const { items } = this.state;
     return (
