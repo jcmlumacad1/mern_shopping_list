@@ -2,15 +2,11 @@ import React, { Component } from 'react';
 import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import uuid from 'uuid';
+import axios from 'axios';
 
 class ShoppingList extends Component {
   state = {
-    items: [
-      { id: uuid(), name: 'Eggs' },
-      { id: uuid(), name: 'Milk' },
-      { id: uuid(), name: 'Steak' },
-      { id: uuid(), name: 'Water' }
-    ]
+    items: []
   };
 
   componentDidMount() {
@@ -18,10 +14,33 @@ class ShoppingList extends Component {
   }
 
   getItems = () => {
-    fetch('/api/items')
-      .then(res => res.json())
-      .then(items => this.setState({items}))
+    axios
+      .get('/api/items')
+      .then(({data: items}) => this.setState({items}))
   };
+
+  createItem = (name) => {
+    if (!name) return;
+    axios
+      .post('/api/items', {name})
+      .then(response => response.data)
+      .then(item => {
+        this.setState(state => ({
+          items: [...state.items, item]
+        }));
+      });
+  }
+
+  deleteItem = (id) => () => {
+    axios
+      .delete('/api/items/' + id)
+      .then((response) => {
+        if (!response.data.success) return;
+        this.setState(state => ({
+          items: state.items.filter(item => item.id !== id)
+        }));
+      });
+  }
 
   render() {
     const { items } = this.state;
@@ -32,11 +51,7 @@ class ShoppingList extends Component {
           style={{ marginBottom: '2rem' }}
           onClick={() => {
             const name = prompt('Enter Item');
-            if (name) {
-              this.setState(state => ({
-                items: [...state.items, { id: uuid(), name }]
-              }));
-            }
+            this.createItem(name);
           }}
         >
           Add Item
@@ -51,11 +66,7 @@ class ShoppingList extends Component {
                     className="remove-btn"
                     color="danger"
                     size="sm"
-                    onClick={() => {
-                      this.setState(state => ({
-                        items: state.items.filter(item => item.id !== id)
-                      }));
-                    }}
+                    onClick={this.deleteItem(id)}
                   >
                     &times;
                   </Button>
